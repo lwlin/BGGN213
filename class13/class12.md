@@ -1,4 +1,4 @@
-Untitled
+Structural Bioinformatics
 ================
 
 load bio3d and get pdb file
@@ -89,3 +89,21 @@ lig
 write.pdb(prot, file= "1hsg_protein.pdb")
 write.pdb(lig, file= "1hsg_ligand.pdb")
 ```
+
+``` r
+res <- read.pdb("all.pdbqt", multi=TRUE)
+write.pdb(res, "results.pdb")
+```
+
+use terminal to access Vina “C:/Program Files (x86)/The Scripps Research
+Institute/Vina/vina.exe” –config config.txt –log log.txt" make sure
+you’re in the right directory
+
+``` r
+res <- read.pdb("all.pdbqt", multi=TRUE)
+ori <- read.pdb("1hsg_ligand.pdbqt")
+rmsd(ori, res)
+```
+
+    ##  [1]  0.649  4.206 11.110 10.529  4.840 10.932 10.993  3.655 10.996 11.222
+    ## [11] 10.567 10.372 11.019 11.338  8.390  9.063  8.254  8.978

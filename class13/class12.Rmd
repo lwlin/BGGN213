@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Structural Bioinformatics"
 output: github_document
 ---
 
@@ -32,6 +32,20 @@ write.pdb(lig, file= "1hsg_ligand.pdb")
 
 
 ```{r}
+res <- read.pdb("all.pdbqt", multi=TRUE)
+write.pdb(res, "results.pdb")
+```
+
+
+use terminal to access Vina
+"C:/Program Files (x86)/The Scripps Research Institute/Vina/vina.exe" --config config.txt --log log.txt"
+make sure you're in the right directory
+
+
+```{r}
+res <- read.pdb("all.pdbqt", multi=TRUE)
+ori <- read.pdb("1hsg_ligand.pdbqt")
+rmsd(ori, res)
 
 ```
 
