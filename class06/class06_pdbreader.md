@@ -1,10 +1,9 @@
----
-title: "class06PDBReader"
-author: "Terry Lin"
-date: "10/18/2019"
-output: github_document
----
-```{r}
+class06PDBReader
+================
+Terry Lin
+10/18/2019
+
+``` r
 #function read any type of pdb protein structure and plot on bio3d
 read<- function(x){ 
   #checks if the bio3d package is available & downloads necessary functions
@@ -21,5 +20,11 @@ read<- function(x){
 #in place of code, put your 4 letter pdb code
 #read("code")
 read("3FXX")
-
 ```
+
+    ## Loading required package: bio3d
+
+    ##   Note: Accessing on-line PDB file
+    ##    PDB has ALT records, taking A only, rm.alt=TRUE
+
+![](class06_pdbreader_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
