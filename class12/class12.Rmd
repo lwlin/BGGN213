@@ -1,0 +1,51 @@
+---
+title: "Structural Bioinformatics"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+load bio3d and get pdb file
+```{r}
+library(bio3d)
+file.name <- get.pdb("1hsg")
+hiv <- read.pdb(file.name)
+hiv
+```
+
+
+trim the pdb file into protein only or ligand only
+you can also use select.atoms instead of trim.pdb
+```{r}
+prot <- trim.pdb(hiv,"protein")
+lig <- trim.pdb(hiv,"ligand")
+prot
+lig
+
+write.pdb(prot, file= "1hsg_protein.pdb")
+write.pdb(lig, file= "1hsg_ligand.pdb")
+
+
+```
+
+
+```{r}
+res <- read.pdb("all.pdbqt", multi=TRUE)
+write.pdb(res, "results.pdb")
+```
+
+
+use terminal to access Vina
+"C:/Program Files (x86)/The Scripps Research Institute/Vina/vina.exe" --config config.txt --log log.txt"
+make sure you're in the right directory
+
+
+```{r}
+res <- read.pdb("all.pdbqt", multi=TRUE)
+ori <- read.pdb("1hsg_ligand.pdbqt")
+rmsd(ori, res)
+
+```
+

@@ -1,0 +1,67 @@
+---
+title: "Untitled"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## What's in the PDB database?
+
+Percent of structures solved by Xray and Electron Microscopy
+```{r}
+pdbstats <- read.csv("Data Export Summary.csv", row.names="Experimental.Method")
+pdbstats
+total <- sum(pdbstats$Total)
+ans <- pdbstats$Total/total*100
+names(ans) <- row.names(pdbstats)
+round(ans,2)
+```
+
+Proportion of structures that are proteins
+```{r}
+proteins <- sum(pdbstats$Proteins)/sum(pdbstats$Total)
+proteins
+```
+
+
+```{r}
+library(bio3d)
+pdb <- read.pdb("1HSG")
+pdb
+attributes (pdb)
+head(pdb$atom)
+pdb$atom[1:2,c("eleno", "elety", "x","y","z")]
+pdb$atom$elety[1:2]
+plot.bio3d(pdb$atom$b[pdb$calpha], sse=pdb, typ="l", ylab="B-factor")
+
+
+```
+
+
+```{r}
+ca.inds <- atom.select(pdb, "calpha", value=TRUE)
+ca.inds
+
+trimprot <- function(x){
+  a<-read.pdb(x)
+  select<- atom.select(a,"protein",value=TRUE)
+  write.pdb(a, file="1hsg_protein.pdb")
+}
+
+trimlig <- function(x){
+  a<-read.pdb(x)
+  select<- atom.select(a,"ligand",value=TRUE)
+  write.pdb(a,file="1hsg_ligand.pdb")
+}
+
+prot<-trimprot("1HSG")
+lig<-trimlig("1HSG")
+
+library(bio3d.view)
+library(rgl)
+view(lig)
+view(prot)
+```
+

@@ -1,0 +1,172 @@
+---
+title: "Transcriptomics and RNA-seq Analysis"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Setup Bioconductor DESeq2
+```{r eval=FALSE}
+install.packages("BiocManager")
+BiocManager::install()
+# For this class, you'll also need DESeq2:
+BiocManager::install("DESeq2")
+```
+
+
+## Data for today's class
+```{r}
+counts <- read.csv("airway_scaledcounts.csv", stringsAsFactors = FALSE)
+metadata <- read.csv("airway_metadata.csv", stringsAsFactors = FALSE)
+
+
+head(counts)
+head(metadata)
+
+##how many genes
+nrow(counts)
+
+##how many experiments
+ncol(counts)-1
+nrow(metadata)
+
+##Check if metadata id col matches colnames of counts
+all(colnames(counts)[-1]==metadata$id)
+```
+
+## Analysis: Compare control to drug treated
+look at metadata$dex, select the controls
+mean counts for control experiment (rowsum/ total number)
+```{r}
+control <- metadata[metadata[,"dex"]=="control",]
+control.mean <- rowSums(counts[, control$id])/length(control)
+names(control.mean) <- counts$ensgene
+```
+
+## Create same data set for experimental
+```{r}
+exp <- metadata[metadata[,"dex"]=="treated",]
+exp.mean <- rowSums(counts[,exp$id])/length(exp)
+names(exp.mean) <- counts$ensgene
+
+head(exp.mean)
+head(control.mean)
+```
+
+## Compare control vs treated
+```{r}
+meancounts <- data.frame(control.mean,exp.mean)
+colSums(meancounts)
+```
+
+## Create scatterplot showing mean of treated against control with log scale
+```{r}
+plot(control.mean, exp.mean, log = "xy")
+```
+
+## FOld change
+```{r}
+meancounts$log2fc <- log2(meancounts[,"exp.mean"]/meancounts[,"control.mean"])
+head(meancounts)
+```
+## weird results, NaN = not a number, when you divide by 0, also weir result is -Inf when you take the log of 0. We want to exclude these samples.
+
+```{r}
+x <- c(5,8,0,5)
+x==0
+which(x==0)
+
+y <- data.frame(happy=c(5,6,0,0),sad=c(0,5,5,0))
+y==0
+which(y==0)
+
+inds <-unique(which(y==0,arr.ind=TRUE)[,1])
+y[inds,]
+
+```
+
+##get rid of genes with zeroes
+```{r}
+zero.val <- which(meancounts[,1:2]==0, arr.ind=TRUE)
+
+to.rm <- unique(zero.val[,1])
+mycounts <- meancounts[-to.rm,]
+head(mycounts)
+
+## how many genes do I have left
+nrow(mycounts)
+```
+
+## Differential Expression
+```{r}
+up.ind <- mycounts$log2fc >2
+down.ind <- mycounts$log2fc< (-2)
+##true =1 and false =0, we can find how many genes are uprg or downreg by summing the vector.
+sum(up.ind)
+sum(down.ind)
+```
+
+##Adding annotation data
+```{r}
+anno <- read.csv("annotables_grch38.csv")
+head(anno)
+
+```
+
+```{r}
+library(AnnotationDbi)
+library(org.Hs.eg.db)
+columns(org.Hs.eg.db)
+
+mycounts$Symbol <- mapIds(org.Hs.eg.db,
+                     keys=row.names(mycounts), # Our genenames
+                     keytype="ENSEMBL",        # The format of our genenames
+                     column="SYMBOL",          # The new format we want to add
+                     multiVals="first")
+
+head(mycounts)
+```
+
+
+##we need significance alongside fold change
+
+## Running DESeq2 analysis : everything above this is what DESeq will do for us. 1) average controls and experimentals 
+
+```{r}
+library(DESeq2)
+```
+
+
+```{r}
+dds <- DESeqDataSetFromMatrix(countData=counts, 
+                              colData=metadata, 
+                              design=~dex, 
+                              tidy=TRUE)
+
+sizeFactors(dds)
+dispersions(dds)
+dds <- DESeq(dds)
+```
+
+```{r}
+res <- results(dds)
+summary(res)
+resdf <- as.data.frame(res)
+View(resdf)
+summary(resdf)
+```
+
+#volcano plot
+```{r}
+mycol <- rep("gray", nrow(res))
+mycol[abs(res$log2FoldChange)>2] <- "red"
+inds <- (res$padj <0.01) & (abs(res$log2FoldChange)>2)
+mycol[inds] <- "blue"
+
+plot(res$log2FoldChange,-log(res$padj),col=mycol)
+abline(v=c(-2,2), col="gray", lty=2)
+abline(h=-log(0.1), col="gray", lty=2)
+```
+

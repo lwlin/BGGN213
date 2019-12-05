@@ -1,0 +1,174 @@
+---
+title: "Pathway Analysis with R and Bioconductor"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(DESeq2)
+
+```
+
+```{r}
+colData = read.csv("C:/Users/Terry/Desktop/R/BGGN213_github/class15/GSE37704_metadata.csv", row.names=1)
+head(colData)
+
+countData = read.csv("C:/Users/Terry/Desktop/R/BGGN213_github/class15/GSE37704_featurecounts.csv", row.names=1)
+head(countData)
+```
+
+
+```{r}
+countData <- countData[rowSums(countData[,-1])>0,-1]
+head(countData)
+nrow(countData)
+```
+
+PCA 
+```{r}
+PC <- prcomp(t(countData))
+plot(PC)
+summary(PC)
+
+mycols <- c(rep("blue",3), rep("red",3))
+plot(PC$x[,1:2], col=mycols)
+
+labs <- colData$condition
+text(PC$x[,1:2],labels= labs, col=mycols)
+
+```
+
+
+DESeq Analysis
+```{r}
+library(DESeq2)
+
+dds= DESeqDataSetFromMatrix(countData= countData,
+                            colData= colData,
+                            design= ~condition)
+dds = DESeq(dds)
+```
+
+```{r}
+res <- results(dds)
+head(res)
+```
+
+##volcano plot summary
+
+```{r}
+# Make a color vector for all genes
+mycolors<- rep("gray",nrow(res))
+# Color red the genes with absolute fold change above 2
+mycolors[abs(res$log2FoldChange)>2]<- "red"
+
+# Color blue those with adjusted p-value less than 0.01
+#  and absolute fold change more than 2
+inds <- (res$padj<0.01) & (abs(res$log2FoldChange) > 2 )
+mycolors[ inds ] <- "blue"
+
+plot( res$log2FoldChange, -log(res$padj), col=mycolors, xlab="Log2(FoldChange)", ylab="-Log(P-value)" )
+plot(res$log2FoldChange,-log(res$padj))
+```
+
+Adding annotations
+
+```{r}
+library("AnnotationDbi")
+library("org.Hs.eg.db")
+
+columns(org.Hs.eg.db)
+
+res$symbol = mapIds(org.Hs.eg.db,
+                    keys=row.names(res), #where are gene ids?
+                    keytype="ENSEMBL",   #what format are your ids?
+                    column= "SYMBOL",   #what column do yuo want to use
+                    multiVals="first")
+res$entrez = mapIds(org.Hs.eg.db,
+                    keys= row.names(res),
+                    keytype="ENSEMBL",
+                    column="ENTREZID",
+                    multiVals="first")
+res$name = mapIds(org.Hs.eg.db,
+                  keys= row.names(res),
+                  keytype="ENSEMBL",
+                  column= "GENENAME",
+                  multiVals="first")
+```
+
+## check and write your results to csv.
+```{r}
+head(res)
+res = res[order(res$pvalue),]
+write.csv(res, file="deseq_results.csv")
+```
+
+
+##Pathway Analysis
+```{r}
+library(pathview)
+library(gage)
+library(gageData)
+
+data(kegg.sets.hs)
+data(sigmet.idx.hs)
+
+# Focus on signaling and metabolic pathways only
+kegg.sets.hs = kegg.sets.hs[sigmet.idx.hs]
+
+# Examine the first 3 pathways
+head(kegg.sets.hs, 3)
+```
+
+
+```{r}
+foldchanges= res$log2FoldChange
+names(foldchanges)=res$entrez
+head(foldchanges)
+```
+
+```{r}
+keggres = gage(foldchanges, gsets=kegg.sets.hs)
+attributes(keggres)
+head(keggres$less)
+```
+
+```{r}
+pathview(gene.data=foldchanges,pathway.id="hsa04110")
+
+```
+##rmarkdown syntax to include your path pic
+![Cell Cycle Pathway](C:/Users/Terry/Desktop/R/BGGN213_github/class15/hsa04110.pathview.png)
+
+## focus on top 5 upregulated pathway
+```{r}
+keggrespathways <- rownames(keggres$greater)[1:5]
+keggresids = substr(keggrespathways, start=1, stop=8)
+keggresids
+
+pathview(gene.data=foldchanges, pathway.id=keggresids, species=("hsa"))
+```
+![Cell Cycle Pathway](C:/Users/Terry/Desktop/R/BGGN213_github/class15/hsa04640.pathview.png)
+
+
+## Gene Ontology (GO)
+```{r}
+data(go.sets.hs)
+data(go.subs.hs)
+
+# Focus on Biological Process subset of GO
+gobpsets = go.sets.hs[go.subs.hs$BP]
+
+gobpres = gage(foldchanges, gsets=gobpsets, same.dir=TRUE)
+
+lapply(gobpres, head)
+
+```
+
+
+
+
+
