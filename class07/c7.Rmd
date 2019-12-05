@@ -1,0 +1,89 @@
+---
+title: "Class07"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+source("http://tinyurl.com/rescale-R")
+```
+
+Try rescale() function from last day
+```{r}
+rescale(1:10)
+```
+```{r}
+##rescale2(c(3,10,NA,7,"string"))
+```
+
+```{r}
+x<- c(1,2,NA,3,NA)
+y<- c(NA,3,NA,3,4)
+is.na(x)
+
+both.na<- function(x,y){
+    sum(is.na(x) & is.na(y))
+}
+
+both.na(x,y)
+```
+
+```{r}
+x<- c(1,2,NA,3,NA)
+y<- c(NA,3,NA,3,4, NA, NA, NA)
+both.na2<- function(x,y){
+    if (length(x) != length(y)){
+      stop("Vectors should be same length")
+    
+    } 
+  sum(is.na(x)&is.na(y))
+}
+##both.na2(x,y)
+```
+
+```{r}
+both.na3<- function(x,y){
+  
+}
+```
+
+##grades practice
+
+```{r}
+
+url <- function() {
+  "https://tinyurl.com/gradeinput"
+}
+```
+
+```{r}
+# student 1
+s1<- c(100, 100, 100, 100, 100, 100, 100, 90)
+# student 2
+s2<- c(100, NA, 90, 90, 90, 90, 97, 80)
+s3<- c(100, NA, NA, NA, NA, NA)
+
+grade<- function(x){
+  #sort by ascending, puts NA's in the first position
+  x<-sort(x, na.last=FALSE)
+  #new vector without the lowest grade, can be an NA
+  s1<- x[2:length(x)]
+  #new vector replacing NA's with 0's
+  s2<-replace(s1,is.na(s1),0)
+  #calculates average
+  sum(s2)/length(s2)
+}
+print(grade(s3))
+print(mean(s3,na.rm=TRUE))
+```
+
+```{r}
+AllGrades<- read.csv("student_homework.csv",header=TRUE, row.names="X")
+apply(AllGrades,1,grade)
+
+
+```
+
