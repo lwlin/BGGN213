@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "PDB"
 output: github_document
 ---
 
@@ -41,6 +41,7 @@ plot.bio3d(pdb$atom$b[pdb$calpha], sse=pdb, typ="l", ylab="B-factor")
 
 
 ```{r}
+library(bio3d)
 ca.inds <- atom.select(pdb, "calpha", value=TRUE)
 ca.inds
 
@@ -59,9 +60,5 @@ trimlig <- function(x){
 prot<-trimprot("1HSG")
 lig<-trimlig("1HSG")
 
-library(bio3d.view)
-library(rgl)
-view(lig)
-view(prot)
 ```
 
