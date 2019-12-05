@@ -1,0 +1,34 @@
+Query: NP_000032.1 apolipoprotein E isoform b precursor [Homo sapiens] Query ID: lcl|Query_63497 Length: 317
+
+>PREDICTED: Xenopus tropicalis apolipoprotein E (apoe), transcript variant X4, mRNA
+Sequence ID: XM_002941039.3 Length: 1749 
+Range 1: 183 to 920
+
+Score:92.0 bits(227), Expect:7e-20, 
+Method:Compositional matrix adjust., 
+Identities:65/264(25%), Positives:145/264(54%), Gaps:18/264(6%)
+
+Query  43   RWELALGRFWDYLRWVQTLSEQVQEELLSSQVTQELRALMDETMKELKAYKSELEEQLTP  102
+            +WE AL  FW  +  ++  +++ + ++  S +++EL  L+ +TM+EL  Y  +++ +++P
+Sbjct  183  KWETALDSFWLTVNKMEEAADEARAKMKDSPISKELDGLIKDTMEELSIYAEDMKSKVSP  362
+
+Query  103  VAEETRARLSKELQAAQARLGADMEDVCGRLVQYRGEVQAMLGQSTEELRVrlashlrkl  162
+            +A++ + R ++E+ A   +L +DMED   + +QY G+++ M  Q+ E+++ ++  +++KL
+Sbjct  363  MAQDAQQRFTEEVSALADKLKSDMEDTKNKAIQYSGDLRMMFDQNIEDVQGKVNMYMKKL  542
+
+Query  163  rkrllrdaddlqkrlaVYQAGAREGAERGLSAIRERLGPLVEQGRVRAATVGSLAGQPLQ  222
+            +KRL +D++DL+K+L+ Y    R+  E  +  +R+ + P +                 ++
+Sbjct  543  KKRLSKDSEDLKKKLSQYGEDFRKSTEDKVENLRKAVEPYLSN---------------VK  677
+
+Query  223  ERAQAWGERLRARMEEMGSRTRDRLDEVKEQVAEVRAKLEEQAQQIRLQAEAFQARLKSW  282
+            ++ Q     L+  ++E G + RDR   V     + +AK+++ A  ++   +    + + W
+Sbjct  678  DKGQQRLMNLKDAIDEQGKQLRDRFVSV---AKDAQAKMKKTASDVKSSVDKLGEQFRKW  848
+
+Query  283  FEPLVEDMQRQWAGLVEKVQAAVG  306
+            F P VE ++ Q   L + +Q    
+Sbjct  849  FNPNVESLRNQLQALAKSLQTKAN  920
+
+
+
+
+

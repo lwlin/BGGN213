@@ -1,0 +1,50 @@
+---
+title: "Untitled"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(bio3d)
+library(pheatmap)
+```
+
+```{r}
+apoe<-read.fasta("apoe_fasta.clw")
+seqid<-seqidentity(apoe)
+
+pheatmap(seqid)
+
+```
+
+```{r}
+
+frog<-read.fasta("apoe_nanorana.txt")
+pdbs <- blast.pdb(frog)
+```
+
+```{r}
+pdbsdf <- as.data.frame(pdbs$hit.tbl)
+sorted <- pdbsdf[order(pdbsdf$identity,decreasing=TRUE),]
+sorted
+
+```
+
+```{r}
+pdb.annotate("6cfe")
+
+get.pdb("1QP8")
+get.pdb("6CFE")
+
+```
+
+```{r}
+
+
+get.pdb("1Qp8")
+
+```
+
