@@ -15,6 +15,6 @@ Contents:
 - Class13 [Genome informatics and high throughput sequencing](https://github.com/lwlin/BGGN213/blob/master/class13/class13.Rproj)
 - Class14 [Transcriptomics and analysis of RNA-seq data](https://github.com/lwlin/BGGN213/blob/master/class14/class14.md)
 - Class15 [Gene annotation and interpretation](https://github.com/lwlin/BGGN213/blob/master/class15/class15.md)
-- Class16 [Biological network analysis]()
+- Class16 [Biological network analysis](https://github.com/lwlin/BGGN213/blob/master/class16/class16.Rmd)
 - Class17 [Essential UNIX]()
 - Class18 [Cancer genomics]()
